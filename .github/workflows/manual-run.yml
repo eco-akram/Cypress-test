@@ -57,10 +57,10 @@ jobs:
           browser: ${{ inputs.browser }}
           spec: ${{ inputs.spec == 'all' && 'cypress/e2e/sweetshop.*.cy.js' || inputs.spec }}
           headed: ${{ inputs.headed }}
-          # Wait for demo site and use CI-friendly overrides
+          # Wait for demo site and use CI-friendly overrides (extended)
           wait-on: 'https://sweetshop.netlify.app'
-          wait-on-timeout: 60
-          config: defaultCommandTimeout=15000,pageLoadTimeout=60000,video=true
+          wait-on-timeout: 180
+          config: defaultCommandTimeout=20000,pageLoadTimeout=180000,video=true
           record: false
 
       - name: Upload test results

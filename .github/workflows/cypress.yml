@@ -41,11 +41,11 @@ jobs:
         with:
           browser: ${{ matrix.browser }}
           spec: cypress/e2e/sweetshop.*.cy.js
-          # Wait for the demo site to respond before starting tests
+          # Wait for the demo site to respond before starting tests (longer timeout for CI)
           wait-on: 'https://sweetshop.netlify.app'
-          wait-on-timeout: 60
-          # Enable CI-only overrides: longer timeouts and video capture for debugging
-          config: defaultCommandTimeout=15000,pageLoadTimeout=60000,video=true
+          wait-on-timeout: 180
+          # CI-friendly overrides: longer timeouts and enable video capture in CI for debugging
+          config: defaultCommandTimeout=20000,pageLoadTimeout=180000,video=true
           record: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
