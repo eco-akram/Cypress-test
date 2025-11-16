@@ -21,6 +21,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Verify Cypress
+        run: npx cypress verify
+
       - name: Run smoke tests
         uses: cypress-io/github-action@v6
         with:
@@ -28,6 +31,10 @@ jobs:
           spec: |
             cypress/e2e/sweetshop.smoke.cy.js
             cypress/e2e/sweetshop.login.cy.js
+          # Wait for demo site and use CI-friendly overrides
+          wait-on: 'https://sweetshop.netlify.app'
+          wait-on-timeout: 60
+          config: defaultCommandTimeout=15000,pageLoadTimeout=60000,video=true
           record: false
 
       - name: Comment PR with results
@@ -52,4 +59,12 @@ jobs:
         with:
           name: pr-test-screenshots
           path: cypress/screenshots
+          if-no-files-found: ignore
+
+      - name: Upload videos on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-test-videos
+          path: cypress/videos
           if-no-files-found: ignore

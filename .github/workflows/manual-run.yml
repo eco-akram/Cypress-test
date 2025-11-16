@@ -48,12 +48,19 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Verify Cypress
+        run: npx cypress verify
+
       - name: Run selected test
         uses: cypress-io/github-action@v6
         with:
           browser: ${{ inputs.browser }}
           spec: ${{ inputs.spec == 'all' && 'cypress/e2e/sweetshop.*.cy.js' || inputs.spec }}
           headed: ${{ inputs.headed }}
+          # Wait for demo site and use CI-friendly overrides
+          wait-on: 'https://sweetshop.netlify.app'
+          wait-on-timeout: 60
+          config: defaultCommandTimeout=15000,pageLoadTimeout=60000,video=true
           record: false
 
       - name: Upload test results
