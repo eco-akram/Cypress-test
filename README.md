@@ -146,13 +146,7 @@ Testuoja keliose naršyklėse: Chrome, Firefox, Edge
 - Komentuoja rezultatus tiesiogiai PR
 - Įkelia ekrano nuotraukas nesėkmės atveju
 
-### 3. Naktinis Pilnas Rinkinys (`.github/workflows/nightly.yml`)
-
-- Vykdo pilną testų rinkinį kiekvieną naktį 4 val. UTC
-- Testuoja visus modulius atskirai
-- Pateikia išsamias aprėpties ataskaitas
-
-### 4. Rankinis Testų Vykdymas (`.github/workflows/manual-run.yml`)
+### 3. Rankinis Testų Vykdymas (`.github/workflows/manual-run.yml`)
 
 Leidžia rankinį paleidimą su parinktimis:
 - Pasirinkti konkretų testų rinkinį arba vykdyti visus
@@ -330,7 +324,6 @@ describe('Sweetshop – Funkcijos pavadinimas', () => {
 
 [Cypress Tests](https://github.com/eco-akram/Cypress-test/actions/workflows/cypress.yml)
 [Manual Tests](https://github.com/eco-akram/Cypress-test/actions/workflows/manual-run.yml)
-[Nightly Tests](https://github.com/eco-akram/Cypress-test/actions/workflows/nightly.yml)
 [PR Tests](https://github.com/eco-akram/Cypress-test/actions/workflows/pr-tests.yml)
 
 ---
