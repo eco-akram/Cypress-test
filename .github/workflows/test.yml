@@ -1,0 +1,145 @@
+name: Cypress Tests
+
+on:
+  push:
+    branches: 
+      - main
+      - develop
+  pull_request:
+    branches: 
+      - main
+      - develop
+  schedule:
+    # Vykdyti kasdien 11 val. UTC
+    - cron: '0 11 * * *'
+  workflow_dispatch:
+    # Leidžia rankinį paleidimą iš GitHub UI
+
+jobs:
+  # Pagrindiniai Cypress testai keliose naršyklėse
+  cypress-run:
+    name: Cypress Tests (${{ matrix.browser }})
+    runs-on: ubuntu-latest
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chrome, firefox, edge]
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify Cypress
+        run: npx cypress verify
+
+      - name: Run Cypress tests
+        uses: cypress-io/github-action@v6
+        with:
+          browser: ${{ matrix.browser }}
+          spec: cypress/e2e/sweetshop.*.cy.js
+          record: false
+          wait-on: 'https://sweetshop.netlify.app'
+          wait-on-timeout: 60
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload screenshots on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-screenshots-${{ matrix.browser }}
+          path: cypress/screenshots
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Upload videos on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-videos-${{ matrix.browser }}
+          path: cypress/videos
+          if-no-files-found: ignore
+          retention-days: 7
+
+  # Smoke testai - kritiniai keliai
+  smoke-tests:
+    name: Smoke Tests (Chrome)
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run smoke tests
+        uses: cypress-io/github-action@v6
+        with:
+          browser: chrome
+          spec: cypress/e2e/sweetshop.smoke.cy.js
+          record: false
+          config: defaultCommandTimeout=15000,pageLoadTimeout=60000
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-test-screenshots
+          path: cypress/screenshots
+          if-no-files-found: ignore
+          retention-days: 7
+
+  # Test rezultatų suvestinė
+  test-summary:
+    name: Test Summary
+    runs-on: ubuntu-latest
+    needs: [cypress-run, smoke-tests]
+    if: always()
+    
+    steps:
+      - name: Check test results
+        run: |
+          echo "## 📊 Test Results Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ needs.cypress-run.result }}" == "success" ]; then
+            echo "✅ **Cypress Tests**: Passed" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Cypress Tests**: Failed" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          if [ "${{ needs.smoke-tests.result }}" == "success" ]; then
+            echo "✅ **Smoke Tests**: Passed" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Smoke Tests**: Failed" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Workflow Run**: [#${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Author**: @${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+
+      - name: Report failure
+        if: needs.cypress-run.result == 'failure' || needs.smoke-tests.result == 'failure'
+        run: |
+          echo "::error::Some tests failed. Check artifacts for screenshots."
+          exit 1
