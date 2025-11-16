@@ -33,11 +33,19 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Verify Cypress
+        run: npx cypress verify
+
       - name: Run Cypress tests
         uses: cypress-io/github-action@v6
         with:
           browser: ${{ matrix.browser }}
           spec: cypress/e2e/sweetshop.*.cy.js
+          # Wait for the demo site to respond before starting tests
+          wait-on: 'https://sweetshop.netlify.app'
+          wait-on-timeout: 60
+          # Enable CI-only overrides: longer timeouts and video capture for debugging
+          config: defaultCommandTimeout=15000,pageLoadTimeout=60000,video=true
           record: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -75,11 +83,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Verify Cypress
+        run: npx cypress verify
+
       - name: Run smoke tests
         uses: cypress-io/github-action@v6
         with:
           browser: chrome
           spec: cypress/e2e/sweetshop.smoke.cy.js
+          wait-on: 'https://sweetshop.netlify.app'
+          wait-on-timeout: 60
+          config: defaultCommandTimeout=15000,pageLoadTimeout=60000,video=true
           record: false
 
       - name: Upload screenshots on failure
