@@ -12,11 +12,11 @@
     "cy:open": "cypress open",
     "cy:run": "cypress run --spec 'cypress/e2e/sweetshop.*.cy.js'",
     "cy:run:smoke": "cypress run --spec 'cypress/e2e/sweetshop.smoke.cy.js'",
-    "cy:run:auth": "cypress run --spec 'cypress/e2e/sweetshop.auth.cy.js'",
-    "cy:run:basket": "cypress run --spec 'cypress/e2e/sweetshop.basket-validation.cy.js'",
-    "cy:run:catalog": "cypress run --spec 'cypress/e2e/sweetshop.catalog-basket.cy.js'",
-    "cy:run:checkout": "cypress run --spec 'cypress/e2e/sweetshop.checkout.cy.js'",
-    "cy:run:homepage": "cypress run --spec 'cypress/e2e/sweetshop.homepage.cy.js'"
+    "cy:run:login": "cypress run --spec 'cypress/e2e/sweetshop.login.cy.js'",
+    "cy:run:basket": "cypress run --spec 'cypress/e2e/sweetshop.basket.cy.js'",
+    "cy:run:catalog": "cypress run --spec 'cypress/e2e/sweetshop.catalog.cy.js'",
+    "cy:run:buying": "cypress run --spec 'cypress/e2e/sweetshop.buying.cy.js'",
+    "cy:run:mainpage": "cypress run --spec 'cypress/e2e/sweetshop.mainpage.cy.js'"
   },
   "keywords": [
     "cypress",

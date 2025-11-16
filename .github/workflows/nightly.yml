@@ -15,11 +15,11 @@ jobs:
       matrix:
         spec:
           - cypress/e2e/sweetshop.smoke.cy.js
-          - cypress/e2e/sweetshop.auth.cy.js
-          - cypress/e2e/sweetshop.homepage.cy.js
-          - cypress/e2e/sweetshop.catalog-basket.cy.js
-          - cypress/e2e/sweetshop.basket-validation.cy.js
-          - cypress/e2e/sweetshop.checkout.cy.js
+          - cypress/e2e/sweetshop.login.cy.js
+          - cypress/e2e/sweetshop.mainpage.cy.js
+          - cypress/e2e/sweetshop.catalog.cy.js
+          - cypress/e2e/sweetshop.basket.cy.js
+          - cypress/e2e/sweetshop.buying.cy.js
     
     steps:
       - name: Checkout code

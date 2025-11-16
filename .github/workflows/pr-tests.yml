@@ -27,7 +27,7 @@ jobs:
           browser: chrome
           spec: |
             cypress/e2e/sweetshop.smoke.cy.js
-            cypress/e2e/sweetshop.auth.cy.js
+            cypress/e2e/sweetshop.login.cy.js
           record: false
 
       - name: Comment PR with results
